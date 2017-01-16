@@ -14,14 +14,6 @@
     </div>
 
 </div>
-<div class="row">
-    <div class="col-md-1">
-        {!! Form::open(['route'=>['album.destroy',$album->id], 'method'=>'DELETE']) !!}
 
-        {!! Form::submit('Delete',['class'=>'btn btn-default']) !!}
-
-        {!! Form::close() !!}
-    </div>
-</div>
 @endsection
 

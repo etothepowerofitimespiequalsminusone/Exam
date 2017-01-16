@@ -26,7 +26,7 @@ Route::get('/home', 'HomeController@index')->middleware('auth');
 //Route::get('admin/wtf',['middleware' => ['auth','admin']],'AdminController@wtf');
 
 Route::get('admin','AdminController@admin')->name('admin');
-
+Route::get('admin/albums','AdminController@albums')->name('admin.albums');
 
 
 

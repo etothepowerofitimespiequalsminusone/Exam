@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Album;
+use Session;
 
 class AlbumController extends Controller
 {
@@ -100,7 +101,31 @@ class AlbumController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+//        $this->validate($request, [
+//            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+//        ]);
+
+        $album = Album::find($id);
+
+        $album->title = $request->title;
+        $album->artist = $request->artist;
+        $album->released = $request->released;
+        $album->albumUrl = $request->albumUrl;
+//        $album->genre = $request->genre;
+//        $album->description = $request->description;
+        $album->save();
+
+        Session::flash('success','Album was successfully saved');
+        //redirect back to edit page
+        return redirect()->route('album.show',$album->id);
+
+
+//
+//        $imageName = time().'.'.$request->image->getClientOriginalExtension();
+//        $request->image->move(public_path('images'), $imageName);
+
+
+
     }
 
     /**

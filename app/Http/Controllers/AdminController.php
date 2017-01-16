@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Album;
 use Illuminate\Http\Request;
 
 class AdminController extends Controller
@@ -16,5 +17,11 @@ class AdminController extends Controller
     }
     public function wtf(){
         return view('fu');
+    }
+
+    public function albums(){
+        $albums = Album::all();
+
+        return view('Admin.albums')->withAlbums($albums);
     }
 }
