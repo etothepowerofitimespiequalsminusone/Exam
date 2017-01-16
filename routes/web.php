@@ -35,3 +35,20 @@ Route::resource('album','AlbumController');
 Route::resource('collection','CollectionController');
 Route::get('collect/{id}','CollectionController@create');
 
+
+//for email
+
+Route::get('/send','EmailController@send');
+
+
+//Route::get('/email', function (){
+////    dd(Config::get('mail'));
+//   Mail::send('Email.send',['title' => 'Working!', 'content' => 'this is working isnt it?'],function ($message){
+//        $message->to('mlaganovskis@gmail.com','Mārtiņš')->from('musictracker@mt.com')->subject('Email does send!');
+//   }) ;
+//});
+
+
+
+
+
