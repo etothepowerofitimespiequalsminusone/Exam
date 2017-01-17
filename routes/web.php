@@ -36,6 +36,10 @@ Route::resource('collection','CollectionController');
 Route::get('collect/{id}','CollectionController@create');
 
 
+Route::get('leaked','PagesController@leaked');
+Route::get('coming','PagesController@coming');
+Route::get('itunes','PagesController@itunes');
+
 //for email
 
 Route::get('/send','EmailController@send');

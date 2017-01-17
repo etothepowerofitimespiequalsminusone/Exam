@@ -10,7 +10,7 @@ class EmailController extends Controller
     public function send()
     {
         Mail::send('Email.send', [
-                'title'=> 'hello martins',
+                'title'=> '',
                 'content' => 'we are glad to see you in our newsletter'
         ],function ($message){
            $message->from('musictracker@mt.com','MusicTracker');

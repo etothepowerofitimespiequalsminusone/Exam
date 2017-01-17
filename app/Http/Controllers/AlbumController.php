@@ -2,9 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Notifications\AlbumLeak;
 use Illuminate\Http\Request;
 use App\Album;
+use Illuminate\Notifications\Notification;
 use Session;
+use App\User;
+use SimpleXMLElement;
 
 class AlbumController extends Controller
 {
@@ -116,6 +120,14 @@ class AlbumController extends Controller
         $album->save();
 
         Session::flash('success','Album was successfully saved');
+//        Notification::send(User::all(),new AlbumLeak($album));
+
+        //select all users who follow this album
+        $user = User::find(2);
+
+        //notify these users
+        $user->notify(new AlbumLeak($album->title));
+
         //redirect back to edit page
         return redirect()->route('album.show',$album->id);
 
@@ -144,14 +156,62 @@ class AlbumController extends Controller
     public function getXmlData(){
         //this is the 'coming soon' rss feedback
         $coming_soon = 'http://hasitleaked.com/feed/';
-        //this is the leaked album rss feed
+//        $context = stream_context_create(
+//            array(
+//                "http" => array(
+//                    "header" => "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36"
+//                )
+//            )
+//        );
+//
+//        $csoon = file_get_contents($coming_soon,false,$context);
+
+        //have to use curl here because of the security of the server
+        $curl_handle=curl_init();
+        curl_setopt($curl_handle, CURLOPT_URL,'http://hasitleaked.com/feed/');
+        curl_setopt($curl_handle, CURLOPT_CONNECTTIMEOUT, 2);
+        curl_setopt($curl_handle, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($curl_handle, CURLOPT_USERAGENT, 'MusicTracker');
+        $xmlsoon = curl_exec($curl_handle);
+        curl_close($curl_handle);
+
+//        var_dump($query);
+
+        $x = new SimpleXMLElement($xmlsoon);
+
+
+
+//        select all users who follow this album
+//        $user = User::find(2);
+//
+//        //notify these users
+//        $user->notify(new AlbumLeak($x->channel->title));
+
+        $albms = $x->channel->item;
+        foreach($albms as $albm)
+        {
+            $artist= substr($albm->title,0,strpos(strval($albm->title),':')-1);
+            $title = substr(strval($albm->title),strpos(strval($albm->title),':')+1);
+            $published_date = strtotime($albm->pubdate);
+            $released = date('Y-m-d', $published_date);
+            $albumUrl = strval($albm->link);
+//            go through all genre tags and concatenate them together
+            $genre = strval($albm->category);
+            $description = strval($albm->description);
+            // if the album is not in the database then create it, but if it is then update it
+            $album = Album::firstOrCreate(array('title' => $title, 'artist'=>$artist));
+            $album->released = $released;
+            $album->albumURL = $albumUrl;
+            $album->genre = $genre;
+            $album->description = $description;
+            $album->save();
+        }
+        //do the same thing with leaked album rss feed
         $leaked= 'http://hasitleaked.com/leakedfeed/';
         $xml = @simplexml_load_file($leaked);
         $item = $xml->channel->item;
         $albumnames = array();
-//        DB::table('albums')
-//            ->where('id', 2)
-//            ->update(['title' => $item->title]);
+
         foreach($item as $album)
         {
             $albumnames[] = $album->title;
@@ -169,14 +229,16 @@ class AlbumController extends Controller
 //            go through all genre tags and concatenate them together
             $genre = strval($album->category);
             $description = strval($album->description);
-            // if the album is not in the database, then save it
-            Album::firstOrCreate(array('title'=>$title, 'artist'=>$artist,'released'=>$released,'albumURL'=>$albumUrl,'genre'=>$genre,
-                'description'=>$description));
-//this was for testing purposes
-//            DB::table('albums')->insert([
-//                ['title' => $title, 'artist' => $artist,'released'=>$released,'albumURL'=>$albumUrl,'genre'=>$genre,
-//                'description'=>$description],
-//            ]);
+
+
+            // if the album is not in the database then create it, but if it is then update it
+            $album = Album::firstOrCreate(array('title' => $title, 'artist'=>$artist));
+            $album->released = $released;
+            $album->albumURL = $albumUrl;
+            $album->genre = $genre;
+            $album->description = $description;
+            $album->leaked = true;
+            $album->save();
         }
         return $albumnames;
     }

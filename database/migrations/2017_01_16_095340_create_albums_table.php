@@ -17,12 +17,13 @@ class CreateAlbumsTable extends Migration
             $table->increments('id');
             $table->string('title');
             $table->string('artist');
-            $table->date('released');
-            $table->string('albumUrl');
+            $table->date('released')->nullable();
+            $table->string('albumUrl')->nullable();
             $table->tinyInteger('leaked')->default(0);
-            $table->string('genre');
-            $table->text('description');
+            $table->string('genre')->nullable();
+            $table->text('description')->nullable();
             $table->timestamps();
+            $table->unique(['title','artist']);
         });
     }
 

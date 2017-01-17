@@ -18,7 +18,14 @@ class UserTableSeeder extends Seeder
             'name' => 'Admin',
             'email' => 'admin@musictracker.com',
             'password' => bcrypt('musictracker'),
-            'role' => 1));
+            'role' => 1)
+            );
+        User::create(array(
+                'name' => 'Mārtiņš',
+                'email' => 'mlaganovskis@gmail.com',
+                'password' => bcrypt('junkjard'),
+                'role' => 0)
+        );
     }
 
 //        public function run()

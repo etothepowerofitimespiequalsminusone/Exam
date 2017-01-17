@@ -1,9 +1,3 @@
-/**
- * Created by PhpStorm.
- * User: Laganovskis
- * Date: 10/31/2016
- * Time: 8:36 PM
- */
 @extends('base')
 @section('title','itunes')
 @section('content')
@@ -18,7 +12,6 @@
                         <input type="text" class="form-control" id="term" name="term">
                         <button type="submit" class="btn btn-default">Search</button>
                     </div>
-
                 </form>
             </div>
             <div class="row">
@@ -37,5 +30,4 @@
             </div>
         </div>
     </div>
-
 @endsection

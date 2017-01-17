@@ -56,8 +56,8 @@ return [
     */
 
     'from' => [
-        'address' => env('Some Guy', 'hello@example.com'),
-        'name' => env('Some Guy', 'Example'),
+        'address' => env('Community', 'music@tracker.dev'),
+        'name' => env('Community', 'MusicTracker'),
     ],
 
     /*

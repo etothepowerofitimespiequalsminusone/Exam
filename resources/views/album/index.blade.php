@@ -1,12 +1,13 @@
 @extends('base')
 {{--@section('title','Newest albums')--}}
 @section('content')
-
+    @if(!Auth::guest() && Auth::user()->isAdmin())
     <div class="row refresh-button">
         <div class="col-md-8 col-md-offset-2">
             <a class="btn btn-default btn-block btn-toolbar" href="{{ route('album.create') }}">Refresh</a>
         </div>
     </div>
+    @endif
     <div class="row table-background">
         <div class="col-md-12">
 

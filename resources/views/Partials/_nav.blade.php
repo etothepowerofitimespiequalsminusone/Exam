@@ -12,7 +12,7 @@
                     <a href="/leaked">Leaked</a>
                 </li>
                 <li class="">
-                    <a href="/articles">Articles</a>
+                    <a href="/coming">Upcoming</a>
                 </li>
                 <li class="">
                     <a href="/album">Albums</a>
