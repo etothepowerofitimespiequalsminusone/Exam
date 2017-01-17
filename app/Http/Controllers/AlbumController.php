@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\AlbumImages;
 use App\Notifications\AlbumLeak;
 use Illuminate\Http\Request;
 use App\Album;
@@ -79,8 +80,6 @@ class AlbumController extends Controller
     public function show($id)
     {
         $album = Album::find($id);
-        //if user checks the check-box then the respective album id gets passed to function
-        //function adds the selected album to users "watching list"
         return view('album.show')->withAlbum($album);
     }
 
@@ -93,7 +92,10 @@ class AlbumController extends Controller
     public function edit($id)
     {
         $album = Album::find($id);
-        return view('album.edit')->withAlbum($album);
+        $albumimages = AlbumImages::all()->where('album_id',$album->id);
+
+
+        return view('album.edit')->withAlbum($album)->withImages($albumimages);
     }
 
     /**
@@ -105,18 +107,12 @@ class AlbumController extends Controller
      */
     public function update(Request $request, $id)
     {
-//        $this->validate($request, [
-//            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-//        ]);
-
         $album = Album::find($id);
-
         $album->title = $request->title;
         $album->artist = $request->artist;
         $album->released = $request->released;
         $album->albumUrl = $request->albumUrl;
-//        $album->genre = $request->genre;
-//        $album->description = $request->description;
+        $album->description = $request->description;
         $album->save();
 
         Session::flash('success','Album was successfully saved');
@@ -130,14 +126,6 @@ class AlbumController extends Controller
 
         //redirect back to edit page
         return redirect()->route('album.show',$album->id);
-
-
-//
-//        $imageName = time().'.'.$request->image->getClientOriginalExtension();
-//        $request->image->move(public_path('images'), $imageName);
-
-
-
     }
 
     /**
@@ -154,18 +142,6 @@ class AlbumController extends Controller
     }
 
     public function getXmlData(){
-        //this is the 'coming soon' rss feedback
-        $coming_soon = 'http://hasitleaked.com/feed/';
-//        $context = stream_context_create(
-//            array(
-//                "http" => array(
-//                    "header" => "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36"
-//                )
-//            )
-//        );
-//
-//        $csoon = file_get_contents($coming_soon,false,$context);
-
         //have to use curl here because of the security of the server
         $curl_handle=curl_init();
         curl_setopt($curl_handle, CURLOPT_URL,'http://hasitleaked.com/feed/');
@@ -174,19 +150,7 @@ class AlbumController extends Controller
         curl_setopt($curl_handle, CURLOPT_USERAGENT, 'MusicTracker');
         $xmlsoon = curl_exec($curl_handle);
         curl_close($curl_handle);
-
-//        var_dump($query);
-
         $x = new SimpleXMLElement($xmlsoon);
-
-
-
-//        select all users who follow this album
-//        $user = User::find(2);
-//
-//        //notify these users
-//        $user->notify(new AlbumLeak($x->channel->title));
-
         $albms = $x->channel->item;
         foreach($albms as $albm)
         {
@@ -201,7 +165,6 @@ class AlbumController extends Controller
             // if the album is not in the database then create it, but if it is then update it
             $album = Album::firstOrCreate(array('title' => $title, 'artist'=>$artist));
             $album->released = $released;
-            $album->albumURL = $albumUrl;
             $album->genre = $genre;
             $album->description = $description;
             $album->save();
@@ -221,10 +184,6 @@ class AlbumController extends Controller
             $title = substr(strval($album->title),strpos(strval($album->title),':')+1);
             $published_date = strtotime($album->pubdate);
             $released = date('Y-m-d', $published_date);
-            //find the cover in itunes store
-//            $keyword = $artist ." ". $title;
-//            $result = $this->searchItunes($keyword);
-//            $albumUrl = $result->collectionViewUrl;
             $albumUrl = strval($album->link);
 //            go through all genre tags and concatenate them together
             $genre = strval($album->category);
@@ -234,7 +193,6 @@ class AlbumController extends Controller
             // if the album is not in the database then create it, but if it is then update it
             $album = Album::firstOrCreate(array('title' => $title, 'artist'=>$artist));
             $album->released = $released;
-            $album->albumURL = $albumUrl;
             $album->genre = $genre;
             $album->description = $description;
             $album->leaked = true;
@@ -245,7 +203,6 @@ class AlbumController extends Controller
     public function searchItunes($keyword){
         $entity = 'album';
         $attribute = 'albumTerm';
-//        $tags = $keyword;
         $url_data = array(
             'entity'=>$entity,
             'term'=>$keyword
@@ -267,7 +224,4 @@ class AlbumController extends Controller
             $cover = $result[0]->collectionViewUrl;
         }
     }
-
-
-
 }

@@ -21,12 +21,15 @@
                     <a href="/itunes">Itunes</a>
                 </li>
             </ul>
-            <form class="navbar-form navbar-left" role="search" method="get" action="#">
-                <div class="form-group">
-                    <input type="text" class="form-control" name="q" value="">
-                </div>
-                <button type="submit" class="btn btn-link glyphicon glyphicon-search"></button>
-            </form>
+
+            {{--this will be a search button in the navigation--}}
+            {{--<form class="navbar-form navbar-left" role="search" method="get" action="#">--}}
+                {{--<div class="form-group">--}}
+                    {{--<input type="text" class="form-control" name="q" value="">--}}
+                {{--</div>--}}
+                {{--<button type="submit" class="btn btn-link glyphicon glyphicon-search"></button>--}}
+            {{--</form>--}}
+
             <ul class="nav navbar-nav navbar-right">
                 @if(Auth::guest())
                     <li><a href="{{ url('/login') }}">Login</a></li>
@@ -39,8 +42,6 @@
                             <li><a href="{{ route('admin') }}">Admin Page</a></li>
                         @else
                         <li><a href="{{ route('collection.index') }}">My Albums</a></li>
-
-                        <li><a href="#">Something else here</a></li>
                         @endif
                         <li role="separator" class="divider"></li>
                         <li>

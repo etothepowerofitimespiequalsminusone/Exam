@@ -1,19 +1,27 @@
 @extends('base')
 @section('content')
-
-
-    <h2><a href='{{ url('collect',$album->id) }}'>Add to my collection</a></h2>
-
-<div class="row">
-    <div class="col-md-8 col-md-offset-2">
-        <h1>{{ $album->title }}</h1>
-        <img src="http://images.genius.com/9d87abf66835582680a63b5e7939d7b6.960x960x1.png" width="500" height="500">
-        <p>{{ $album->artist }}</p>
-        <h5>{{$album->created_at}}</h5>
-        <img src="{{ $album->albumUrl }}" alt="{{ $album->title }}">
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <h1>{{ $album->title }}</h1>
+            <h2>{{ $album->artist }}</h2>
+            @if($album->albumUrl != '')
+                <img src="{{ $album->albumUrl }}" alt="{{ $album->title }}">
+            @else
+                <strong>we need an album image</strong>
+            @endif
+        </div>
     </div>
+    @if(!Auth::guest())
+    <div class="col-md-10 col-md-offset-2">
 
-</div>
+        {!! Form::open(['route'=> 'collection.store','class'=>'collection-form']) !!}
 
+        {{ Form::hidden('user_id',auth()->user()->id) }}
+        {{ Form::hidden('album_id',$album->id) }}
+        {{ Form::submit('Add to collection',['class' => 'btn btn-lrg']) }}
+
+        {!! Form::close() !!}
+    </div>
+    @endif
 @endsection
 

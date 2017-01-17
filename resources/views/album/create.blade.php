@@ -29,6 +29,16 @@
             {!! Form::close() !!}
         </div>
     </div>
+
+    <div class="row">
+        <form method="post" action="{{ route('album.store',$album->id) }}" enctype="multipart/form-data">
+            {{ csrf_field() }}
+
+            <input type="file" name="image">
+            <button type="submit">Save image</button>
+        </form>
+    </div>
+
 @endsection
 @section('scripts')
     {!! Html::script('js/parsley.min.js') !!}

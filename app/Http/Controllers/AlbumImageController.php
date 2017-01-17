@@ -2,19 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Album;
-use App\User;
+use App\AlbumImages;
 use Illuminate\Http\Request;
-use App\AlbumCollection;
-use Session;
-class CollectionController extends Controller
-{
-//
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
 
+class AlbumImageController extends Controller
+{
     /**
      * Display a listing of the resource.
      *
@@ -22,18 +16,7 @@ class CollectionController extends Controller
      */
     public function index()
     {
-        $user = auth()->user();
-        $id = $user->id;
-        //find all user album collection entries
-        $collection = AlbumCollection::all()->where('user_id',$id);
-        $albums = [];
-
-        //cycle through all collections and find respective albums
-        foreach ($collection as $item)
-        {
-            $albums[$item['album_id']] = Album::where('id', $item['album_id'])->first();
-        }
-        return view('collection.index')->withCollection($collection)->withAlbums($albums);
+        //
     }
 
     /**
@@ -41,10 +24,9 @@ class CollectionController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create($id)
+    public function create()
     {
-        $album = Album::find($id);
-        return view('collection.create')->withAlbum($album);
+        //
     }
 
     /**
@@ -55,19 +37,20 @@ class CollectionController extends Controller
      */
     public function store(Request $request)
     {
-        $rules = [
+        // store file in app/storage/images
 
-        ];
 
-        $collection = new AlbumCollection();
-        $collection->user_id = $request->user_id;
-        $collection->album_id = $request->album_id;
-        var_dump($request->album_id);
-        $collection->save();
+        $path = $request->file('image')->store('images');
 
-        Session::flash('success', 'album saved to your album list');
-        return redirect()->route('collection.index');
+        // store filepath in database
+        $albumimage = new AlbumImages();
+        $albumimage->album_id = $request->album_id;
+        $albumimage->image_path = $path;
+        $albumimage->save();
+        //move it to public folder so that it is possible to display images in views
+        File::move(storage_path() . "/app/" . $albumimage->image_path,"/home/laganovskis/Sites/musictracker/public/" . $albumimage->image_path);
 
+        return back();
     }
 
     /**

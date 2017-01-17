@@ -13,4 +13,8 @@ class Album extends Model
     public function albumcollection(){
         $this->belongsToMany('App/AlbumCollection');
     }
+
+    public function albumimages(){
+        $this->hasMany('App/AlbumImages');
+    }
 }

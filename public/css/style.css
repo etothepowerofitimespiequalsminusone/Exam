@@ -112,10 +112,11 @@ img
   flex: 1;
 }
 
-
 .results{
     text-decoration: none;
-
+}
+.article:hover{
+    background-color: lightgrey;
 }
 
 

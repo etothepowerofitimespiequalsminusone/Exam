@@ -11,39 +11,34 @@
 |
 */
 
-
-
 Route::get('/','PagesController@index');
 
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->middleware('auth');
 
-//Route::get('/', 'PagesController@index');
-
-
-//Route::get('admin',['middleware' => 'auth'],function(){ return view('/');});
-//Route::get('admin/wtf',['middleware' => ['auth','admin']],'AdminController@wtf');
-
 Route::get('admin','AdminController@admin')->name('admin');
 Route::get('admin/albums','AdminController@albums')->name('admin.albums');
 
-
-
 Route::resource('album','AlbumController');
+Route::resource('albumimage','AlbumImageController');
 
 Route::resource('collection','CollectionController');
 Route::get('collect/{id}','CollectionController@create');
-
 
 Route::get('leaked','PagesController@leaked');
 Route::get('coming','PagesController@coming');
 Route::get('itunes','PagesController@itunes');
 
-//for email
 
-Route::get('/send','EmailController@send');
+Route::post('image',function (){
+    request()->file('image')->store('images');
 
+    return back();
+});
+
+//for email, decided to use notifications instead
+//Route::get('/send','EmailController@send');
 
 //Route::get('/email', function (){
 ////    dd(Config::get('mail'));
