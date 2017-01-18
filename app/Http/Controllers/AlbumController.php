@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\AlbumCollection;
 use App\AlbumImages;
 use App\Notifications\AlbumLeak;
 use Illuminate\Http\Request;
@@ -80,7 +81,9 @@ class AlbumController extends Controller
     public function show($id)
     {
         $album = Album::find($id);
-        return view('album.show')->withAlbum($album);
+
+        $albumimages = AlbumImages::all()->where('album_id',$album->id);
+        return view('album.show')->withAlbum($album)->withImages($albumimages);
     }
 
     /**
@@ -121,10 +124,16 @@ class AlbumController extends Controller
 //        Notification::send(User::all(),new AlbumLeak($album));
 
         //select all users who follow this album
-        $user = User::find(2);
+        $collection = AlbumCollection::all()->where('album_id',$album->id);
+        foreach ($collection as $item)
+        {
+            $user = User::find($item->user_id);
+            $user->notify(new AlbumLeak($album->title));
+        }
+//        $user = User::find(2);
 
         //notify these users
-        $user->notify(new AlbumLeak($album->title));
+//        $user->notify(new AlbumLeak($album->title));
 
         //redirect back to edit page
         return redirect()->route('album.show',$album->id);
