@@ -118,5 +118,8 @@ img
 .article:hover{
     background-color: lightgrey;
 }
+ul{
+    list-style: none;
+}
 
 

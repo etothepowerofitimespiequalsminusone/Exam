@@ -14,9 +14,11 @@
                 <li class="">
                     <a href="/coming">Upcoming</a>
                 </li>
+                @if(!Auth::guest())
                 <li class="">
                     <a href="/album">Albums</a>
                 </li>
+                @endif
                 <li class="">
                     <a href="/itunes">Itunes</a>
                 </li>
@@ -39,7 +41,7 @@
                     <a href="/" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ Auth::user()->name }} <span class="caret"></span></a>
                     <ul class="dropdown-menu">
                         @if(Auth::user()->isAdmin())
-                            <li><a href="{{ route('admin') }}">Admin Page</a></li>
+                            <li><a href="{{ route('admin.albums') }}">Admin Page</a></li>
                         @else
                         <li><a href="{{ route('collection.index') }}">My Albums</a></li>
                         @endif

@@ -55,19 +55,11 @@ class CollectionController extends Controller
      */
     public function store(Request $request)
     {
-        $rules = [
-
-        ];
-
-        $collection = new AlbumCollection();
-        $collection->user_id = $request->user_id;
-        $collection->album_id = $request->album_id;
-        var_dump($request->album_id);
+        $collection = AlbumCollection::firstOrCreate(array('user_id' => $request->user_id, 'album_id'=>$request->album_id));
         $collection->save();
 
         Session::flash('success', 'album saved to your album list');
         return redirect()->route('collection.index');
-
     }
 
     /**

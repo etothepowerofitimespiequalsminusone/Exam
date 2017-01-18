@@ -2,9 +2,11 @@
 @section('content')
     <div class="panel panel-default">
         <div class="panel-body">
-            @foreach($albums as $album)
-                <a href="{{ route('album.show',$album->id) }}"><li>{{$album->title}}</li></a>
-            @endforeach
+            <ul>
+                @foreach($albums as $album)
+                    <li><a href="{{ route('album.show',$album->id) }}">{{$album->title}}</a></li>
+                @endforeach
+            </ul>
         </div>
     </div>
 @endsection

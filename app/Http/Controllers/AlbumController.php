@@ -10,6 +10,7 @@ use Illuminate\Notifications\Notification;
 use Session;
 use App\User;
 use SimpleXMLElement;
+use Auth;
 
 class AlbumController extends Controller
 {
@@ -19,10 +20,10 @@ class AlbumController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-//    public function __construct()
-//    {
-//        $this->middleware('auth');
-//    }
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
 
     public function index()
     {
@@ -38,6 +39,7 @@ class AlbumController extends Controller
      */
     public function create()
     {
+        $this->middleware('admin');
         $this->getXmlData();
         return view('album.create');
     }
@@ -58,9 +60,7 @@ class AlbumController extends Controller
 //            'albumUrl' => 'required'
 //        ));
         //store in the database
-        $album = new Album();
-        $album->title = $request->title;
-        $album->artist = $request->artist;
+        $album = Album::firstOrCreate(array('title' => $request->title, 'artist'=>$request->artist));
         $album->released = $request->released;
         $album->albumUrl = $request->albumUrl;
         $album->genre = $request->genre;
@@ -91,6 +91,7 @@ class AlbumController extends Controller
      */
     public function edit($id)
     {
+        $this->middleware('admin');
         $album = Album::find($id);
         $albumimages = AlbumImages::all()->where('album_id',$album->id);
 
@@ -107,6 +108,7 @@ class AlbumController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $this->middleware('admin');
         $album = Album::find($id);
         $album->title = $request->title;
         $album->artist = $request->artist;
@@ -136,6 +138,7 @@ class AlbumController extends Controller
      */
     public function destroy($id)
     {
+        $this->middleware('admin');
         $album = Album::find($id);
         $album->delete();
         return redirect()->route('album.index');

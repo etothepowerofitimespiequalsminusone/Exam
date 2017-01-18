@@ -17,7 +17,7 @@ Auth::routes();
 
 Route::get('/home', 'HomeController@index')->middleware('auth');
 
-Route::get('admin','AdminController@admin')->name('admin');
+Route::get('admin','AdminController@admin');
 Route::get('admin/albums','AdminController@albums')->name('admin.albums');
 
 Route::resource('album','AlbumController');
@@ -30,12 +30,17 @@ Route::get('leaked','PagesController@leaked');
 Route::get('coming','PagesController@coming');
 Route::get('itunes','PagesController@itunes');
 
+Route::get('redirect',function (){ return view('redirect');});
 
-Route::post('image',function (){
-    request()->file('image')->store('images');
+Route::get('album/{album}/edit','AlbumController@edit')->name('album.edit')->middleware('admin');
 
-    return back();
-});
+
+//image posting
+//Route::post('image',function (){
+//    request()->file('image')->store('images');
+//
+//    return back();
+//});
 
 //for email, decided to use notifications instead
 //Route::get('/send','EmailController@send');
